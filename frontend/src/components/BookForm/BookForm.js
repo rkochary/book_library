@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
-
-import './BookForm.css'
-import { addBook } from '../../redux/books/actionCreators';
+import { addBook } from '../../redux/slices/booksSlice'
 import booksData from '../../data/books.json'
 import createBookWithID from '../../utils/createBookWithID';
+import './BookForm.css'
 
 const BookForm = () => {
 
@@ -23,7 +22,6 @@ const handleSubmit = (e) => {
     e.preventDefault();
     if(title && author){
         const book = createBookWithID({title,author})
-        console.log(addBook(book));
         dispatch(addBook(book));
         setTitle('');
         setAuthor('');
