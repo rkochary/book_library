@@ -46,7 +46,7 @@ const handleResetFilters = () => {
         <div className='filter-group'>
           <label>
             <input type='checkbox' onChange={handleSetOnlyFavoriteFilterChange} checked={onlyFavoritFilter}/>
-            Only FAvorite
+            Only Favorite
           </label>
         </div>
 
