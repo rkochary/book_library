@@ -3,7 +3,10 @@ import axios from 'axios'
 import createBookWithID from '../../utils/createBookWithID'
 import { setError } from "./errorSlice";
 
-const initialState = [];
+const initialState = {
+    books : [],
+    isLoadingviaApi : false
+};
 
 export const fetchBook = createAsyncThunk(
     'books/fetchBook',
@@ -24,13 +27,16 @@ const bookSlice = createSlice({
     initialState,
     reducers:{
         addBook : (state,action) => {
-            state.push(action.payload)
+            state.books.push(action.payload)
         },
         deleteBook : (state,action) => {
-            return state.filter(book => book.id !== action.payload) 
+            return {
+                ...state,
+                books: state.books.filter(book => book.id !== action.payload) 
+            }
         },
         toggleFavorite : (state,action) => {
-            state.forEach((book) => {
+            state.books.forEach((book) => {
                 if(book.id === action.payload){
                     book.isFavorite = !book.isFavorite
                 }
@@ -38,11 +44,19 @@ const bookSlice = createSlice({
         }
     },
     extraReducers:(builder) => {
+
+        builder.addCase(fetchBook.pending,(state) => {
+            state.isLoadingviaApi = true
+        })
         builder.addCase(fetchBook.fulfilled,(state,action) => {
+            state.isLoadingviaApi = false
             if(action.payload.title && action.payload.author){
-              state.push(createBookWithID((action.payload),'API'))
+                state.books.push(createBookWithID((action.payload),'API'))
             }
-        });
+        })
+        builder.addCase(fetchBook.rejected,(state) => {
+            state.isLoadingviaApi = false
+        })
     }
 })
 
@@ -50,6 +64,7 @@ const bookSlice = createSlice({
 
 export const {addBook,deleteBook,toggleFavorite} = bookSlice.actions
 
-export const selectBooks = state => state.books
+export const selectBooks = state => state.books.books
+export const selectIsLoading = state => state.books.isLoadingviaApi
 
 export default bookSlice.reducer
